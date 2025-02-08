@@ -1,0 +1,416 @@
+{
+  "scopeName": "source.easel",
+  "note": "Thanks to Alzarath for providing the grammar file (https://github.com/Alzarath/Easel-TmLanguage)",
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Easel",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#public"
+    },
+    {
+      "include": "#function-call"
+    },
+    {
+      "include": "#method-call"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#storage"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#variables-mutable"
+    }
+  ],
+  "repository": {
+    "basic-type.builtin": {
+      "match": "(?xi)(?<=\\b)(?:boolean)(?=\\b)",
+      "name": "entity.name.type.pascal"
+    },
+    "code": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#method-call"
+        },
+        {
+          "include": "#function-call"
+        },
+        {
+          "include": "#variables-mutable"
+        },
+        {
+          "include": "#objects"
+        },
+        {
+          "include": "#storage"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.delimiter.easel"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.separator.period.easel"
+        },
+        {
+          "match": ";",
+          "name": "punctuation.terminator.easel"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.easel"
+            }
+          },
+          "match": "/\\*\\*/",
+          "name": "comment.block.empty.easel"
+        },
+        {
+          "include": "#comments-inline"
+        }
+      ]
+    },
+    "comments-inline": {
+      "patterns": [
+        {
+          "begin": "/\\*",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.easel"
+            }
+          },
+          "end": "\\*/",
+          "name": "comment.block.easel"
+        },
+        {
+          "begin": "(^[ \\t]+)?(?=//)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.easel"
+            }
+          },
+          "end": "(?!\\G)",
+          "patterns": [
+            {
+              "begin": "//",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.comment.easel"
+                }
+              },
+              "end": "\\n",
+              "name": "comment.line.double-slash.easel"
+            }
+          ]
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.easel",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.easel",
+          "match": "\\b(if|else|repeat|while|for|loop|break|continue|surprise|return)\\b"
+        },
+        {
+          "name": "keyword.control.ternary.easel",
+          "match": "\\?|:"
+        },
+        {
+          "name": "keyword.operator.bitwise.easel",
+          "match": "(<<|>>?|~|\\^)"
+        },
+        {
+          "name": "keyword.operator.bitwise.easel",
+          "match": "(\\||&)"
+        },
+        {
+          "name": "keyword.operator.assignment.bitwise.easel",
+          "match": "((&|\\^|\\||<<|>>?)=)"
+        },
+        {
+          "name": "keyword.operator.comparison.easel",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.assignment.arithmetic.easel",
+          "match": "([+*/%-]=)"
+        },
+        {
+          "name": "keyword.operator.assignment.easel",
+          "match": "(=)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.easel",
+          "match": "(\\-|\\+|\\*|\\/|%)"
+        },
+        {
+          "name": "keyword.operator.logical.easel",
+          "match": "(!|&&|\\|\\||\\^)"
+        },
+        {
+          "name": "keyword.reserved.easel",
+          "match": "\\b(buff|field|prop|signal|game|page|delete|const|use|once|delve|this|collect)\\b"
+        }
+      ]
+    },
+    "function-call": {
+      "begin": "\\b([A-Z][\\w]*)\\b\\s*",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.function.easel"
+        }
+      },
+      "end": "(\\)|$|\\,)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.parameters.end.bracket.round.easel"
+        }
+      },
+      "name": "meta.function-call.easel",
+      "patterns": [
+        {
+          "include": "#generics"
+        },
+        {
+          "name": "meta.method.return-value.easel",
+          "match": "\\s*->\\s*[a-z_]"
+        },
+        {
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.parameters.begin.easel"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.parameters.end.easel"
+            }
+          },
+          "name": "meta.function.parameters.easel",
+          "patterns": [
+            {
+              "include": "#keyword_arguments"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "begin": "{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.method.begin.bracket.curly.easel"
+            }
+          },
+          "end": "}",
+          "contentName": "meta.method.body.easel",
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        }
+      ]
+    },
+    "generics": {
+      "patterns": [
+        {
+          "match": "<[a-zA-Z_][a-zA-Z0-9_]*>",
+          "name": "storage.type.generic.easel"
+        }
+      ]
+    },
+    "keyword_arguments": {
+      "begin": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(=)(?!=)",
+      "beginCaptures": {
+        "1": {
+          "name": "variable.parameter.function.keyword.easel"
+        },
+        "2": {
+          "name": "keyword.operator.assignment.easel"
+        }
+      },
+      "end": "\\s*(?:(,)|(?=[\\)\\:]))",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.separator.parameters.easel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "method-call": {
+      "begin": "(\\.)\\s*([A-Z][\\w]*)\\s*(\\(?)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.separator.period.easel"
+        },
+        "2": {
+          "name": "entity.name.function.easel"
+        },
+        "3": {
+          "name": "punctuation.definition.parameters.begin.bracket.round.easel"
+        }
+      },
+      "end": "\\)?",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.parameters.end.bracket.round.easel"
+        }
+      },
+      "name": "meta.method-call.easel",
+      "patterns": [
+        {
+          "include": "#code"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "(?x)\n\\b(?<!\\$)\n0(x|X)\n(\n  (?<!\\.)[0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?[Ll]?(?!\\.)\n  |\n  (\n    [0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?\\.?\n    |\n    ([0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?)?\\.[0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?\n  )\n  [Pp][+-]?[0-9]([0-9_]*[0-9])?[FfDd]?\n)\n\\b(?!\\$)",
+          "name": "constant.numeric.hex.easel"
+        },
+        {
+          "match": "\\b(?<!\\$)0(b|B)[01]([01_]*[01])?[Ll]?\\b(?!\\$)",
+          "name": "constant.numeric.binary.easel"
+        },
+        {
+          "match": "\\b(?<!\\$)0[0-7]([0-7_]*[0-7])?[Ll]?\\b(?!\\$)",
+          "name": "constant.numeric.octal.easel"
+        },
+        {
+          "match": "(?x)\n(?<!\\$)\n(\n  \\b[0-9]([0-9_]*[0-9])?\\.\\B(?!\\.)\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)[FfDd]?\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[FfDd]\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[FfDd]?\\b\n  |\n  (?<!\\.)\\B\\.[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[FfDd]?\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)[FfDd]?\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[FfDd]\\b\n  |\n  \\b(0|[1-9]([0-9_]*[0-9])?)(?!\\.)[Ll]?\\b\n)\n(?!\\$)",
+          "name": "constant.numeric.decimal.easel"
+        },
+        {
+          "match": "(?x)\n(?<!\\$)\n(\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)[dhms]\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[dhms]\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[dhms]\\b\n  |\n  (?<!\\.)\\B\\.[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[dhms]\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)[dhms]\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?[dhms]\\b\n)\n(?!\\$)",
+          "name": "constant.numeric.duration.easel"
+        },
+        {
+          "match": "(?x)\n(?<!\\$)\n(\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)(deg|rev)\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([Ee][+-]?[0-9]([0-9_]*[0-9])?)?(deg|rev)\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)([Ee][+-]?[0-9]([0-9_]*[0-9])?)?(deg|rev)\\b\n  |\n  (?<!\\.)\\B\\.[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?(deg|rev)\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)(deg|rev)\\b\n  |\n  \\b[0-9]([0-9_]*[0-9])?([Ee][+-]?[0-9]([0-9_]*[0-9])?)?(deg|rev)\\b\n)\n(?!\\$)",
+          "name": "constant.numeric.angle.easel"
+        }
+      ]
+    },
+    "public": {
+      "match": "(?<=\\b)pub(?=\\b)",
+      "name": "keyword.modifer.easel"
+    },
+    "storage": {
+      "patterns": [
+        {
+          "name": "storage.type.function.easel",
+          "match": "\\b(fn)\\b"
+        },
+        {
+          "begin": "(@)\\s*(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.type.vector.easel"
+            },
+            "2": {
+              "name": "punctuation.definition.parameters.begin.bracket.round.easel"
+            }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.parameters.end.bracket.round.easel"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#function-call"
+            },
+            {
+              "include": "#method-call"
+            }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.easel",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.easel",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "variables-mutable": {
+      "begin": "(?=\\b(let)\\b\\s+[a-z][A-Za-z_$][\\w$]*\\s*=)",
+      "name": "meta.definition.variable.local.easel",
+      "end": "(?=\\=)",
+      "patterns": [
+        {
+          "match": "\\blet\\b",
+          "name": "storage.type.local.easel"
+        },
+        {
+          "match": "([A-Za-z$_][\\w$]*)(?=\\s*(\\[\\])*\\s*(=|:|;))",
+          "captures": {
+            "1": {
+              "name": "variable.other.definition.easel"
+            }
+          }
+        },
+        {
+          "include": "#code"
+        }
+      ]
+    }
+  }
+}
