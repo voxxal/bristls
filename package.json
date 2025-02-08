@@ -2,13 +2,20 @@
   "name": "bristls",
   "version": "1.0.0",
   "description": "",
-  "main": "./client/out/extension",
+  "main": "./dist/extension",
+  "publisher": "voxal",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -b",
+    "vscode:prepublish": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production",
+    "compile": "pnpm run check-types && node esbuild.js",
+    "check-types": "tsc --noEmit",
     "watch": "tsc -b -w",
     "lint": "eslint",
     "test": "sh ./scripts/e2e.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voxxal/bristls.git"
   },
   "engines": {
     "vscode": "^1.75.0"
@@ -23,7 +30,11 @@
         "extensions": [
           ".easel",
           ".esfx"
-        ]
+        ],
+        "icon": {
+          "dark": "./icons/logo.svg",
+          "light": "./icons/logo.svg"
+        }
       }
     ],
     "grammars": [
@@ -58,5 +69,8 @@
   },
   "keywords": [],
   "author": "voxal",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.25.0"
+  }
 }

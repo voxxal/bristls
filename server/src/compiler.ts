@@ -205,7 +205,7 @@ let existingCompilerInterface = null;
 export const loadCompiler = async () => {
   if (existingCompilerInterface) return existingCompilerInterface;
   const wasmInstance = await WebAssembly.instantiate(
-    await readFile(join(__dirname, "../src", "./compiler.d5cd3a01c799934dd803.wasm")),
+    await readFile(join(__dirname, "./compiler.wasm")),
     bindgen
   );
   const compilerInterface = ((wasmInstance as any).instance || wasmInstance)
